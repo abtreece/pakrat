@@ -8,7 +8,7 @@ from pakrat import util, log, repo, repos, progress
 __version__ = '0.3.2'
 
 def sync(basedir=None, objrepos=[], repodirs=[], repofiles=[],
-         repoversion=None, delete=False, combined=False, callback=None):
+         repoversion=None, delete=False, combined=False, callback=None, includelist=None):
     """ Mirror repositories with configuration data from multiple sources.
 
     Handles all input validation and higher-level logic before passing control
@@ -44,7 +44,7 @@ def sync(basedir=None, objrepos=[], repodirs=[], repofiles=[],
         dest = util.get_repo_dir(basedir, objrepo.id)
         p = multiprocessing.Process(target=repo.sync, args=(objrepo, dest,
                                     repoversion, delete, combined, yumcallback,
-                                    repocallback))
+                                    repocallback, includelist))
         p.start()
         processes.append(p)
 

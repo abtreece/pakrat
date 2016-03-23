@@ -94,7 +94,7 @@ def retrieve_group_comps(repo):
             return None
 
 def sync(repo, dest, version, delete=False, combined=False, yumcallback=None,
-         repocallback=None):
+         repocallback=None, includelist=None):
     """ Sync repository contents from a remote source.
 
     Accepts a repository, destination path, and an optional version, and uses
@@ -140,6 +140,11 @@ def sync(repo, dest, version, delete=False, combined=False, yumcallback=None,
 
         # reinstall_available = Available packages which are installed.
         packages = ygh.available + ygh.reinstall_available
+
+        try:
+            packages = [p for p in packages if p.name in includelist]
+        except TypeError:
+            pass
 
         # Inform about number of packages total in the repo.
         callback(repocallback, repo, 'repo_init', len(packages))
