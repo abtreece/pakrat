@@ -41,9 +41,9 @@ parser.add_option('--combined', action='store_true', default=False,
           'The resulting repository will be a combined package history of '
           'all packages ever synced for each repository. Only useful with '
           'the --repoversion option.'))
-parser.add_option('--includelist', default=None,
-    help=('Optionally specify a comma-seperated list of files to sync.'
-          ' Defaults to None (so download everything'))
+parser.add_option('--includepkgs', default=[],
+    help=('Optionally specify a comma-seperated list of packages to sync. '
+          'Defaults to None (so download everything'))
 
 options, args = parser.parse_args()
 
@@ -64,10 +64,10 @@ if options.combined and not options.repoversion:
     print '--combined is only usable with --repoversion.'
     sys.exit(1)
 
-try:
-    includelist = [p.strip() for p in options.includelist.split(',')]
-except TypeError:
-    includelist = None
+if options.includepkgs:
+    includepkgs = [p.strip() for p in options.includepkgs.split(',')]
+else:
+    includepkgs = None
 
 try:
     numrepos, numfails, elapsed = pakrat.sync(
@@ -78,7 +78,7 @@ try:
         repodirs=options.repodir,
         delete=options.delete,
         combined=options.combined,
-        includelist=includelist,
+        includelist=includepkgs,
     )
 except:
     sys.exit(1)
