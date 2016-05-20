@@ -260,7 +260,7 @@ Pakrat can be easily packaged into an RPM.
 
 1. Download a release and name the tarball `pakrat.tar.gz`:
 ```
-curl -o pakrat.tar.gz -L https://github.com/ryanuber/pakrat/archive/master.tar.gz
+curl -o pakrat.tar.gz -L https://github.com/abtreece/pakrat/archive/master.tar.gz
 ```
 
 2. Build it into an RPM:
