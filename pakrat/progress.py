@@ -1,6 +1,7 @@
 import sys
 import datetime
 
+
 class Progress(object):
     """ Handle progress indication using callbacks.
 
@@ -11,7 +12,7 @@ class Progress(object):
     display aggregated status of multiple repositories during a sync.
     """
     repos = {}
-    totals = {'numpkgs':0, 'dlpkgs':0, 'errors':0}
+    totals = {'numpkgs': 0, 'dlpkgs': 0, 'errors': 0}
     errors = []
     prevlines = 0
 
@@ -28,7 +29,7 @@ class Progress(object):
         when repository metadata begins indexing and when it completes.
         """
         if not self.repos.has_key(repo_id):
-            self.repos[repo_id] = {'numpkgs':0, 'dlpkgs':0, 'repomd':'-'}
+            self.repos[repo_id] = {'numpkgs': 0, 'dlpkgs': 0, 'repomd': '-'}
         if set_total:
             self.repos[repo_id]['numpkgs'] = set_total
             self.totals['numpkgs'] += set_total
@@ -67,13 +68,13 @@ class Progress(object):
     def represent_repo_pkgs(self, repo_id):
         """ Format the ratio of packages in a repository. """
         numpkgs = self.repos[repo_id]['numpkgs']
-        dlpkgs  = self.repos[repo_id]['dlpkgs']
+        dlpkgs = self.repos[repo_id]['dlpkgs']
         return self.represent_pkgs(dlpkgs, numpkgs)
 
     def represent_total_pkgs(self):
         """ Format the total number of packages in all repositories. """
         numpkgs = self.totals['numpkgs']
-        dlpkgs  = self.totals['dlpkgs']
+        dlpkgs = self.totals['dlpkgs']
         return self.represent_pkgs(dlpkgs, numpkgs)
 
     def represent_pkgs(self, dlpkgs, numpkgs):
@@ -90,13 +91,13 @@ class Progress(object):
     def represent_repo_percent(self, repo_id):
         """ Display the percentage of packages downloaded in a repository. """
         numpkgs = self.repos[repo_id]['numpkgs']
-        dlpkgs  = self.repos[repo_id]['dlpkgs']
+        dlpkgs = self.repos[repo_id]['dlpkgs']
         return self.represent_percent(dlpkgs, numpkgs)
 
     def represent_total_percent(self):
         """ Display the overall percentage of downloaded packages. """
         numpkgs = self.totals['numpkgs']
-        dlpkgs  = self.totals['dlpkgs']
+        dlpkgs = self.totals['dlpkgs']
         return self.represent_percent(dlpkgs, numpkgs)
 
     def represent_percent(self, dlpkgs, numpkgs):
@@ -120,13 +121,13 @@ class Progress(object):
         This makes calls to the other methods of this class to create a
         formatted string, which makes nice columns.
         """
-        if self.repos[repo_id].has_key('error'):
+        if 'error' not in self.repos[repo_id]:
             packages = '     error'
-            percent  = ''
+            percent = ''
             metadata = ''
         else:
             packages = self.represent_repo_pkgs(repo_id)
-            percent  = self.represent_repo_percent(repo_id)
+            percent = self.represent_repo_percent(repo_id)
             metadata = self.represent_repomd(repo_id)
         return self.format_line(repo_id, packages, percent, metadata)
 
@@ -181,6 +182,7 @@ class Progress(object):
 
         sys.stdout.flush()
 
+
 class YumProgress(object):
     """ Creates an object for passing to YUM for status updates.
 
@@ -207,7 +209,8 @@ class YumProgress(object):
             try: method(self.repo_id, *args)
             except: pass
 
-    def start(self, filename=None, url=None, basename=None, size=None, text=None):
+    def start(self, filename=None, url=None, basename=None,
+              size=None, text=None):
         """ Called by urlgrabber when a file download starts.
 
         All we use this for is storing the name of the file being downloaded so
@@ -215,7 +218,8 @@ class YumProgress(object):
         """
         if basename:
             self.package = basename
-            self.callback('download_start', filename, url, basename, size, text)
+            self.callback('download_start', filename, url, basename,
+                          size, text)
 
     def update(self, size):
         """ Called during the course of a download.
@@ -232,9 +236,11 @@ class YumProgress(object):
         RPM we are getting the event for.
         """
         if self.package.endswith('.rpm'):
-            self.queue.put({'repo_id':self.repo_id, 'action':'download_end',
-                            'value':1})
+            self.queue.put({'repo_id': self.repo_id,
+                            'action': 'download_end',
+                            'value': 1})
         self.callback('download_end', size)
+
 
 class ProgressCallback(object):
     """ Register our own callback for progress indication.
@@ -266,8 +272,9 @@ class ProgressCallback(object):
         which is mandatory to do aggregated progress indication. This method
         also calls the user callback, if any is defined.
         """
-        self.queue.put({'repo_id':repo_id, 'action': action, 
-                        'value':value})
+        self.queue.put({'repo_id': repo_id,
+                        'action': action,
+                        'value': value})
         self.callback(repo_id, action, value)
 
     def repo_metadata(self, repo_id, value):
@@ -287,5 +294,6 @@ class ProgressCallback(object):
         self.send(repo_id, 'repo_error', error)
 
     def local_pkg_exists(self, repo_id, pkgname):
-        """ Called when a download will be skipped because it already exists """
+        """ Called when a download will be skipped because
+        it already exists """
         self.send(repo_id, 'local_pkg_exists', pkgname)
