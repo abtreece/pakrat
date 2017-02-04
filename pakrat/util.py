@@ -7,9 +7,11 @@ PACKAGESDIR = 'Packages'
 METADATADIR = 'repodata'
 LATESTREPO = 'latest'
 
+
 def get_yum():
     """ Retrieve a YumBase object, pre-configured. """
     return YumBase()
+
 
 def get_repo_dir(basedir, name):
     """ Return the path to a repository directory.
@@ -19,17 +21,21 @@ def get_repo_dir(basedir, name):
     """
     return os.path.join(basedir, name)
 
+
 def get_packages_dir(repodir):
     """ Return the path to the packages directory of a repository. """
     return os.path.join(repodir, PACKAGESDIR)
+
 
 def get_package_path(repodir, packagename):
     """ Return the path to an individual package file. """
     return os.path.join(repodir, PACKAGESDIR, packagename)
 
+
 def get_relative_packages_dir():
     """ Return the relative path to the packages directory. """
     return os.path.join('..', PACKAGESDIR)
+
 
 def get_package_relativedir(packagename):
     """ Return the relative path to an individual package file.
@@ -39,9 +45,11 @@ def get_package_relativedir(packagename):
     """
     return os.path.join(PACKAGESDIR, packagename)
 
+
 def get_versioned_dir(repodir, version):
     """ Return the path to a specific version of a repository. """
     return os.path.join(repodir, version)
+
 
 def get_latest_symlink_path(repodir):
     """ Return the path to the latest repository directory.
@@ -51,13 +59,16 @@ def get_latest_symlink_path(repodir):
     """
     return os.path.join(repodir, LATESTREPO)
 
+
 def get_package_filename(pkg):
     """ From a repository object, return the name of the RPM file. """
     return '%s-%s-%s.%s.rpm' % (pkg.name, pkg.version, pkg.release, pkg.arch)
 
+
 def get_metadata_dir(repodir):
     """ Return the path to the repository metadata directory """
     return os.path.join(repodir, METADATADIR)
+
 
 def validate_basedir(basedir):
     """ Validate the input of a basedir.
@@ -68,11 +79,13 @@ def validate_basedir(basedir):
     if type(basedir) is not str:
         raise Exception('basedir must be a string, not "%s"' % type(basedir))
 
+
 def validate_url(url):
     """ Validate a source URL. http(s) or file-based accepted. """
     if not (url.startswith('http://') or url.startswith('https://') or
             url.startswith('file://')):
         raise Exception('Unsupported URL format "%s"' % url)
+
 
 def validate_baseurl(baseurl):
     """ Validate user input of a repository baseurl. """
@@ -80,12 +93,14 @@ def validate_baseurl(baseurl):
         raise Exception('baseurl must be a string')
     validate_url(baseurl)
 
+
 def validate_baseurls(baseurls):
     """ Validate multiple baseurls from a list. """
     if type(baseurls) is not list:
         raise Exception('baseurls must be a list')
     for baseurl in baseurls:
         validate_baseurl(baseurl)
+
 
 def validate_mirrorlist(mirrorlist):
     """ Validate a repository mirrorlist source. """
@@ -96,10 +111,12 @@ def validate_mirrorlist(mirrorlist):
         raise Exception('mirrorlist cannot use a file:// source.')
     validate_url(mirrorlist)
 
+
 def validate_repo(repo):
     """ Validate a repository object. """
     if type(repo) is not yum.yumRepo.YumRepository:
         raise Exception('repo must be a YumRepository, not "%s"' % type(repo))
+
 
 def validate_repos(repos):
     """ Validate repository objects. """
@@ -108,6 +125,7 @@ def validate_repos(repos):
     for repo in repos:
         validate_repo(repo)
 
+
 def validate_repofile(repofile):
     """ Validate a repository file """
     if type(repofile) is not str:
@@ -115,12 +133,14 @@ def validate_repofile(repofile):
     if not os.path.exists(repofile):
         raise Exception('repofile does not exist: "%s"' % repofile)
 
+
 def validate_repofiles(repofiles):
     """ Validate paths to repofiles. """
     if type(repofiles) is not list:
         raise Exception('repofiles must be a list, not "%s"' % type(repofiles))
     for repofile in repofiles:
         validate_repofile(repofile)
+
 
 def validate_repodir(repodir):
     """ Validate a repository configuration directory path """
@@ -130,6 +150,7 @@ def validate_repodir(repodir):
         raise Exception('Path does not exist or is not a directory: "%s"' %
                         repodir)
 
+
 def validate_repodirs(repodirs):
     """ Validate directories of repository files. """
     if type(repodirs) is not list:
@@ -137,11 +158,13 @@ def validate_repodirs(repodirs):
     for repodir in repodirs:
         validate_repodir(repodir)
 
+
 def make_dir(dir):
     """ Create a directory recursively, if it does not exist. """
     if not os.path.exists(dir):
         log.trace('Creating directory %s' % dir)
         os.makedirs(dir)
+
 
 def symlink(path, target):
     """ Create a symbolic link.

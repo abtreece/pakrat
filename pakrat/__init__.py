@@ -3,12 +3,16 @@ import sys
 import multiprocessing
 import signal
 import urlparse
+
+
 from pakrat import util, log, repo, repos, progress
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
+
 
 def sync(basedir=None, objrepos=[], repodirs=[], repofiles=[],
-         repoversion=None, delete=False, combined=False, callback=None, includelist=None):
+         repoversion=None, delete=False, combined=False,
+         callback=None, includelist=None):
     """ Mirror repositories with configuration data from multiple sources.
 
     Handles all input validation and higher-level logic before passing control
@@ -45,8 +49,8 @@ def sync(basedir=None, objrepos=[], repodirs=[], repofiles=[],
         p = multiprocessing.Process(target=repo.sync, args=(objrepo, dest,
                                     repoversion, delete, combined, yumcallback,
                                     repocallback, includelist))
-        p.start()
         processes.append(p)
+        p.start()
 
     def stop(*args):
         """ Inner method for terminating threads on signal events.
@@ -74,11 +78,11 @@ def sync(basedir=None, objrepos=[], repodirs=[], repofiles=[],
         # nonlocal keyword).
         while not queue.empty():
             e = queue.get()
-            if not e.has_key('action'):
+            if 'action' not in e:
                 continue
-            if e['action'] == 'repo_init' and e.has_key('value'):
+            if e['action'] == 'repo_init' and 'value' in e:
                 prog.update(e['repo_id'], set_total=e['value'])
-            elif e['action'] == 'download_end' and e.has_key('value'):
+            elif e['action'] == 'download_end' and 'value' in e:
                 prog.update(e['repo_id'], pkgs_downloaded=e['value'])
             elif e['action'] == 'repo_metadata':
                 prog.update(e['repo_id'], repo_metadata=e['value'])

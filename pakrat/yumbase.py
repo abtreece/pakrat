@@ -8,6 +8,8 @@ only the scaffolding, and none of the system repositories or other inherited
 configuration. This sounds easy but is not really built-in to YUM. This method
 also uses the YUM client library to create its own cachedir on instantiation.
 """
+
+
 class YumBase(yum.YumBase):
 
     def __init__(self):
