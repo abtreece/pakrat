@@ -78,11 +78,11 @@ def sync(basedir=None, objrepos=[], repodirs=[], repofiles=[],
         # nonlocal keyword).
         while not queue.empty():
             e = queue.get()
-            if 'action' not in e:
+            if not e.has_key('action'):
                 continue
-            if e['action'] == 'repo_init' and 'value' in e:
+            if e['action'] == 'repo_init' and e.has_key('value'):
                 prog.update(e['repo_id'], set_total=e['value'])
-            elif e['action'] == 'download_end' and 'value' in e:
+            elif e['action'] == 'download_end' and e.has_key('value'):
                 prog.update(e['repo_id'], pkgs_downloaded=e['value'])
             elif e['action'] == 'repo_metadata':
                 prog.update(e['repo_id'], repo_metadata=e['value'])
