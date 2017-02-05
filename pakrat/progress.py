@@ -121,7 +121,7 @@ class Progress(object):
         This makes calls to the other methods of this class to create a
         formatted string, which makes nice columns.
         """
-        if 'error' not in self.repos[repo_id]:
+        if self.repos[repo_id].has_key('error'):
             packages = '     error'
             percent = ''
             metadata = ''
