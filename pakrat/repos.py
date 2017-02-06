@@ -11,11 +11,10 @@ def from_file(path):
     if not os.path.exists(path):
         raise Exception('No such file or directory: %s' % path)
     yb = util.get_yum()
+    yb.repos.disableRepo('*')
     yb.getReposFromConfigFile(path)
-    for repo in yb.repos.findRepos('*'):
-        yb.doSackSetup(thisrepo=repo.getAttribute('name'))
     repos = []
-    for repo in yb.repos.findRepos('*'):
+    for repo in yb.repos.listEnabled():
         if repo.isEnabled():
             log.info('Added repo %s from file %s' % (repo.id, path))
             repos.append(repo)

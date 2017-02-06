@@ -3,8 +3,6 @@ import sys
 import multiprocessing
 import signal
 import urlparse
-
-
 from pakrat import util, log, repo, repos, progress
 
 __version__ = '0.3.3'
@@ -19,7 +17,6 @@ def sync(basedir=None, objrepos=[], repodirs=[], repofiles=[],
     on to threads for doing the actual syncing. One thread is created per
     repository to alleviate the impact of slow mirrors on faster ones.
     """
-    util.validate_repos(objrepos)
     util.validate_repofiles(repofiles)
     util.validate_repodirs(repodirs)
 
@@ -41,6 +38,9 @@ def sync(basedir=None, objrepos=[], repodirs=[], repofiles=[],
     manager = multiprocessing.Manager()
     queue = manager.Queue()
     processes = []
+
+    util.validate_repos(objrepos)
+
     for objrepo in objrepos:
         prog.update(objrepo.id)  # Add the repo to the progress object
         yumcallback = progress.YumProgress(objrepo.id, queue, callback)
@@ -78,11 +78,11 @@ def sync(basedir=None, objrepos=[], repodirs=[], repofiles=[],
         # nonlocal keyword).
         while not queue.empty():
             e = queue.get()
-            if 'action' not in e:
+            if not e.has_key('action'):
                 continue
-            if e['action'] == 'repo_init' and 'value' in e:
+            if e['action'] == 'repo_init' and e.has_key('value'):
                 prog.update(e['repo_id'], set_total=e['value'])
-            elif e['action'] == 'download_end' and 'value' in e:
+            elif e['action'] == 'download_end' and e.has_key('value'):
                 prog.update(e['repo_id'], pkgs_downloaded=e['value'])
             elif e['action'] == 'repo_metadata':
                 prog.update(e['repo_id'], repo_metadata=e['value'])
