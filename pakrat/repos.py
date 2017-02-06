@@ -15,7 +15,6 @@ def from_file(path):
     yb.getReposFromConfigFile(path)
     repos = []
     for repo in yb.repos.listEnabled():
-        yb._getSacks(thisrepo=repo.id)
         if repo.isEnabled():
             log.info('Added repo %s from file %s' % (repo.id, path))
             repos.append(repo)
