@@ -129,11 +129,13 @@ def sync(repo, dest, version, delete=False, combined=False, yumcallback=None,
         packages_dir = util.get_packages_dir(dest_dir)
     try:
         yb = util.get_yum()
+        repo.enable()
         repo = set_path(repo, packages_dir)
         if yumcallback:
             repo.setCallback(yumcallback)
         yb.repos.add(repo)
         yb.repos.enableRepo(repo.id)
+        yb.doSackSetup(thisrepo=repo.id)
         with suppress():
             # showdups allows us to get multiple versions of the same package.
             ygh = yb.doPackageLists(showdups=True)
